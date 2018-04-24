@@ -1,34 +1,43 @@
 package com.karyogamy.jaexcore.extender
 
 import com.google.android.exoplayer2.ExoPlayer
+import com.karyogamy.jaexcore.playback.MediaSourceManager
+import com.karyogamy.jaexcore.playback.MediaSourceManagerListener
 import com.karyogamy.jaexcore.playqueue.PlayQueue
+import com.karyogamy.jaexcore.stream.MetadataInspector
 import com.karyogamy.jaexcore.stream.StreamSourceResolver
 import java.io.Serializable
 
-interface BaseExtender<QueueMeta : Serializable, ResolvedMeta : Serializable> {
+interface BaseExtender<QueueMeta : Serializable, ResolvedMeta : Serializable>:
+        MediaSourceManagerListener<QueueMeta, ResolvedMeta> {
 
     fun getPlayer() : ExoPlayer
+
+    fun getMediaSourceManager() : MediaSourceManager<QueueMeta, ResolvedMeta>
 
     fun getCurrentResolvedMetadata() : ResolvedMeta?
 
     /* Flow Control */
 
-    fun initialize(builder: PlayQueue<QueueMeta>,
-                   resolver: StreamSourceResolver<QueueMeta, ResolvedMeta>)
+    fun initialize(queue: PlayQueue<QueueMeta>,
+                   resolver: StreamSourceResolver<QueueMeta, ResolvedMeta>,
+                   inspector: MetadataInspector<ResolvedMeta>)
 
     fun invalidate()
 
     /* Play Queues */
 
-    fun setPlayQueue(builder: PlayQueue<QueueMeta>)
+    fun setPlayQueue(queue: PlayQueue<QueueMeta>)
 
     fun getPlayQueue() : PlayQueue<QueueMeta>?
 
-    /* Resolvers */
+    /* Resolver */
 
     fun setResolver(resolver: StreamSourceResolver<QueueMeta, ResolvedMeta>)
 
-    fun getResolver() : StreamSourceResolver<QueueMeta, ResolvedMeta>?
+    /* Inspector */
+
+    fun setInspector(inspector: MetadataInspector<ResolvedMeta>)
 
     /* Listeners */
 
